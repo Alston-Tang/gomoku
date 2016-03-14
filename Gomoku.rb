@@ -1,9 +1,10 @@
-require 'Human'
-require 'Computer'
+require './Human'
+require './Computer'
+require './Board'
 
 class Gomoku
   def initialize
-    @board = Array.new(17, Array.new(17, '.'))
+    @board = Board.new
     @player1 = nil
     @player2 = nil
     @turn = nil
@@ -11,84 +12,59 @@ class Gomoku
 
   def startGame
     choosePlayerType
-    @turn = @player1
     play
   end
 
   def choosePlayerType
     until @player1 do
       puts 'Choose player 1 type [computer|human]: '
-      p = gets
+      p = gets.strip
       if p == 'computer'
-          @player1 = Computer.new('O')
+        @player1 = Computer.new('O')
       elsif p == 'human'
-          @player1 = Human.new('O')
+        @player1 = Human.new('O')
       end
     end
     until @player2 do
       puts 'Choose player 2 type [computer|human]: '
-      p = gets
+      p = gets.strip
       if p == 'computer'
-        @player2 = Computer.new('O')
+        @player2 = Computer.new('X')
       elsif p == 'human'
-        @player2 = Human.new('O')
-      end
-    end
-
-    def play
-      move = @turn.nextMove
-    end
-
-    def changeTurn
-      if @turn == @player1
-        @turn = @player2
-      else
-        @turn = @player1
-      end
-    end
-
-    def win?(move)
-      row = concatLength(x - 1, y, @turn)
-    end
-
-    def concatLength(x, y, symbol, direction)
-      if x < 0 or x > 16 or y < 0 or y > 16
-        return 0
-      end
-      if @board[y][x] != symbol
-        return 0
-      end
-      case direction
-        when 'lu'
-          return 1 + concatLength(x - 1, y - 1, symbol, direction)
-        when 'l'
-          return 1 + concatLength(x - 1, y, symbol, direction)
-        when 'lb'
-          return 1 + concatLength(x - 1, y + 1, symbol, direction)
-        when 'b'
-          return 1 + concatLength(x, y + 1, symbol, direction)
-        when 'rb'
-          return 1 + concatLength(x + 1, y + 1, symbol, direction)
-        when 'r'
-          return 1 + concatLength(x + 1, y, symbol, direction)
-        when 'ru'
-          return 1 + concatLength(x + 1, y - 1, symbol, direction)
-        when 'u'
-          return 1 + concatLength(x, y - 1, symbol, direction)
+        @player2 = Human.new('X')
       end
     end
   end
 
-  def to_s
-    p = ''
-    @board.each{
-      |x| p += x.join(' ')
-      p += "\n"
-    }
-    p
+  def play
+    until @board.win? or @board.draw?
+      changeTurn
+      loop do
+        break if @board.place(@turn, @turn.nextMove(@board))
+      end
+    end
+    result
+  end
+
+  def result
+    if @board.draw?
+      puts 'Game over: Draw!'
+    else
+      puts 'Game over: ' + @turn.symbol + ' Win!'
+    end
+  end
+
+
+  def changeTurn
+    if @turn == @player1
+      @turn = @player2
+    elsif @turn == @player2
+      @turn = @player1
+    else
+      @turn = @player1
+    end
   end
 end
 
-
-
-t = Gomoku.new
+game = Gomoku.new
+game.startGame
