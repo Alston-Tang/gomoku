@@ -17,20 +17,20 @@ class Gomoku
 
   def choosePlayerType
     until @player1 do
-      puts 'Choose player 1 type [computer|human]: '
-      p = gets.strip
-      if p == 'computer'
+      puts 'First player is (1) Computer or (2) Human?'
+      p = gets.to_i
+      if p == 1
         @player1 = Computer.new('O')
-      elsif p == 'human'
+      elsif p == 2
         @player1 = Human.new('O')
       end
     end
     until @player2 do
-      puts 'Choose player 2 type [computer|human]: '
-      p = gets.strip
-      if p == 'computer'
+      puts 'Second player is (1) Computer or (2) Human?'
+      p = gets.to_i
+      if p == 1
         @player2 = Computer.new('X')
-      elsif p == 'human'
+      elsif p == 2
         @player2 = Human.new('X')
       end
     end
@@ -40,6 +40,7 @@ class Gomoku
     until @board.win? or @board.draw?
       changeTurn
       loop do
+        puts @board
         break if @board.place(@turn, @turn.nextMove(@board))
       end
     end
@@ -47,10 +48,11 @@ class Gomoku
   end
 
   def result
+    puts @board
     if @board.draw?
-      puts 'Game over: Draw!'
+      puts 'Draw!'
     else
-      puts 'Game over: ' + @turn.symbol + ' Win!'
+      puts 'Player ' + @turn.symbol + ' wins!'
     end
   end
 

@@ -1,10 +1,10 @@
 class Board
   def initialize
-    @board = Array.new(19)
+    @board = Array.new(17)
     (0..@board.length - 1).each { |i|
-      @board[i] = Array.new(19)
+      @board[i] = Array.new(17)
       (0..@board[i].length - 1).each { |j|
-        if i == 0 or i == 18 or j == 0 or j == 18
+        if i == 0 or i == 16 or j == 0 or j == 16
           @board[i][j] = 'B'
         else
           @board[i][j] = '.'
@@ -24,8 +24,7 @@ class Board
     end
     @board[y][x] = player.symbol
     @moves.push(move)
-    puts self
-    puts "\n"
+    puts "Player #{player.symbol} places to row #{y - 1}, col #{x - 1}"
     move
   end
 
@@ -123,8 +122,8 @@ class Board
 
   def randEmptyPos
     loop do
-      x = rand(17) + 1
-      y = rand(17) + 1
+      x = rand(15)
+      y = rand(15)
       if empty?(x, y)
         return [x, y]
       end
@@ -132,10 +131,16 @@ class Board
   end
 
   def to_s
+    puts '                       1 1 1 1 1'
+    puts '   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4'
     board_s = ''
     @board.each_index{
       |x|
       if x > 0 and x < @board.length - 1
+        if x - 1 < 10
+          board_s += ' '
+        end
+        board_s += "#{x - 1} "
         board_s += @board[x].slice(1 .. @board.length - 2).join(' ')
         board_s += "\n"
       end
@@ -143,6 +148,3 @@ class Board
     board_s
   end
 end
-
-a = Board.new
-puts a

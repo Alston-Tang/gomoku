@@ -4,6 +4,7 @@ require './Move'
 class Computer < Player
   def initialize(symbol)
     super(symbol)
+    puts "Player #{symbol} is Computer"
     @weakPoints = []
   end
 
